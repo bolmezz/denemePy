@@ -11,10 +11,9 @@ class Kitap:  # parantexe gerek yok class tanımında
         self.baskı = baskı
 
     def __str__(self):
-        print("Kitap özellikleri : ")
-        print("Kitap ismi : {}\nYazarı : {}\nYayınevi : {}\nTürü : {}\nBaskı : {}\n".format(self.isim, self.yazar,
+        return "\nKitap ismi : {}\nYazarı : {}\nYayınevi : {}\nTürü : {}\nBaskı : {}\n".format(self.isim, self.yazar,
                                                                                             self.yayınevi, self.tür,
-                                                                                            self.baskı))
+                                                                                            self.baskı)
 
 
 class Kütüphane:  # DB oluştur, bağlantıları sağla, DB işlemlerini metod olarak yaz
@@ -59,7 +58,7 @@ class Kütüphane:  # DB oluştur, bağlantıları sağla, DB işlemlerini metod
 
     def kitap_ekle(self, isim, yazar, yayınevi, tür, baskı):
         kitap = Kitap(isim, yazar, yayınevi, tür, baskı)
-        sorgu = "Insert into kitaplar Values(?,?,?,?)"
+        sorgu = "Insert into kitaplar Values(?,?,?,?,?)"
 
         self.cursor.execute(sorgu, (isim, yazar, yayınevi, tür, baskı))
         self.con.commit()
@@ -67,14 +66,28 @@ class Kütüphane:  # DB oluştur, bağlantıları sağla, DB işlemlerini metod
         time.sleep(2)
         print("Kitap eklendi...")
 
+    def kitap_varMı(self, isim):
+        sorgu = "Select * from kitaplar Where isim = ?"
+
+        self.cursor.execute(sorgu, (isim,))
+        liste = self.cursor.fetchall()
+
+        if len(liste) == 0:
+            return False
+
+        return True
+
     def kitap_sil(self, isim):
         sorgu = "Delete from kitaplar where isim = ?"
 
-        self.cursor.execute(sorgu, (isim,))
-        self.con.commit()
-        print("Kitap siliniyor...")
-        time.sleep(2)
-        print("Kitap silindi...")
+        if self.kitap_varMı(isim):
+            self.cursor.execute(sorgu, (isim,))
+            self.con.commit()
+            print("Kitap siliniyor...")
+            time.sleep(2)
+            print("Kitap silindi...")
+        else:
+            print("Kitap yok...")
 
     def baskı_yükselt(self, isim):
         sorgu = "select * from kitaplar where isim = ?"
@@ -94,4 +107,3 @@ class Kütüphane:  # DB oluştur, bağlantıları sağla, DB işlemlerini metod
             print("Baskı güncelleniyor...")
             time.sleep(2)
             print("{} baskısı yükseltildi...".format(isim))
-
