@@ -10,7 +10,7 @@ def ekstra(func):
                 çiftler.append(i)
             else:
                 tekler.append(i)
-        func(sayılar)
+        func(sayılar) # asıl fonksiyonu çalıştırır (ort(sayılar))
         print("Çift sayıların ortalaması : ", (reduce(lambda x, y: x + y, çiftler) / len(çiftler)))
         print("Tek sayıların ortalaması : ", (reduce(lambda x, y: x + y, tekler) / len(tekler)))
 
